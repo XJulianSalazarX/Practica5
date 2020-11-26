@@ -8,6 +8,7 @@
 #include <QKeyEvent>//recibir teclas
 #include "personajes.h"
 #include "monedas.h"
+#include "laberinto.h"
 #include <QList>
 
 QT_BEGIN_NAMESPACE
@@ -32,8 +33,16 @@ private:
     QList<Monedas *> coins;
 
     void keyPressEvent(QKeyEvent *evento);
+
+    void ConstruirMuro();
+    bool Chocar();
     void ConstruirMonedas();
     void ComerMonedas();
     bool ComprobarMuro(float posx,float posy);
+
+    laberinto *pared1, *pared2, *pared3, *pared4, *pared5, *pared6, *pared7, *pared8, *pared9,
+    *pared10, *pared11, *pared12, *pared13, *pared14, *pared15, *pared16, *pared17, *pared18,
+    *pared19, *pared20, *pared21, *pared22, *pared23, *pared24, *pared25, *pared26, *pared27,
+    *pared28, *pared29,*pared30, *pared31, *pared32, *pared33;
 };
 #endif // MAINWINDOW_H

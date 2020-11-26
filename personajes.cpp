@@ -6,17 +6,17 @@ Personajes::Personajes(QObject *parent) : QObject(parent)
     filas = 0;
     columnas = 0;
     begin = 0;
-    suma = 37.5;
-    end = 150;
-    pixmap = new QPixmap(":/imagenes/PACMAN_opt (1).png");
+    suma = 25;
+    end = 100;
+    pixmap = new QPixmap(":/imagenes/PACMAN_opt (2).png");
 
-    posy = 325;
-    posx = 520;
+    posy = 865;
+    posx = 370;
     velocidad =5;
 
     //dimensiones de la imagen
-     ancho = 37.5;
-     alto = 38;
+     ancho = 25;
+     alto = 25;
      timer->start(120);
      connect(timer,&QTimer::timeout,this,&Personajes::Actualizacion);
 

@@ -7,5 +7,6 @@
         <file>imagenes/PACMAN_opt (1).png</file>
         <file>imagenes/monedas.png</file>
         <file>imagenes/coin_gold.png</file>
+        <file>imagenes/PACMAN_opt (2).png</file>
     </qresource>
 </RCC>
