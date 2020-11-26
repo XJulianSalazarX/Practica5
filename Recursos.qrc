@@ -9,5 +9,9 @@
         <file>imagenes/coin_gold.png</file>
         <file>imagenes/PACMAN_opt (2).png</file>
         <file>imagenes/pared (1).jpg</file>
+        <file>imagenes/muros.jpg</file>
+        <file>imagenes/fondo_blanco.jpg</file>
+        <file>imagenes/fondo_negro.jpg</file>
+        <file>imagenes/fondo_negro1.jpg</file>
     </qresource>
 </RCC>
