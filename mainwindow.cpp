@@ -66,7 +66,7 @@ void MainWindow::ConstruirMonedas()
     float posx=22,posy=30;
     Monedas *moneda;
     QList<Monedas>::iterator it;
-    for(int i=0;i<181;){
+    for(int i=0;i<17;){
        if(!ComprobarMuro(posx,posy)){
        moneda = new Monedas(posx,posy);
        coins.push_back(moneda);
@@ -91,6 +91,7 @@ void MainWindow::ComerMonedas()
     for(Monedas *i : coins){
         if(pacman->collidesWithItem(i)){
             scene->removeItem(i);
+            delete i;
             coins.removeAt(pos);
             break;
         }
