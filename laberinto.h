@@ -3,15 +3,13 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
 
 class laberinto: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
-    int posx, posy;
 public:
     laberinto(int w_,int h_, int x, int y);
-    int getPosx() const;
-    int getPosy() const;
 };
 
 #endif // LABERINTO_H

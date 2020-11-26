@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent)
     //muro prueba
     muro1 = new laberinto(91,92,42,44);
     scene->addItem(muro1);
-    muro1->setPos(muro1->getPosx(),muro1->getPosy());
 
     //monedas
     ConstruirMonedas();
