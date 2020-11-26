@@ -32,7 +32,6 @@ public:
 
     int getPosx() const;
     void setPosx(int value);
-
     int getPosy() const;
     void setPosy(int value);
 

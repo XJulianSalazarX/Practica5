@@ -3,11 +3,12 @@
 
 #include <QMainWindow>
 #include <QRectF>
-#include <QDesktopWidget>
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QKeyEvent>//recibir teclas
 #include "personajes.h"
+#include "monedas.h"
+#include <QList>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,8 +28,12 @@ private:
 
     float x,y;
     Personajes *pacman;
-    Personajes *redGhost;
+    Monedas *moneda;
+    QList<Monedas *> coins;
 
     void keyPressEvent(QKeyEvent *evento);
+    void ConstruirMonedas();
+    void ComerMonedas();
+    bool ComprobarMuro(float posx,float posy);
 };
 #endif // MAINWINDOW_H

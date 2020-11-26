@@ -18,10 +18,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    monedas.cpp \
     personajes.cpp
 
 HEADERS += \
     mainwindow.h \
+    monedas.h \
     personajes.h
 
 FORMS += \
