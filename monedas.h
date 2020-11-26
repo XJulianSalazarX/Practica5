@@ -10,14 +10,13 @@
 class Monedas : public QObject, public QGraphicsItem
 {
     Q_OBJECT
-    int posicion;
     float posx,posy;
     float ancho,alto;
     float filas,columnas;
     QTimer *timer;
     QPixmap *pixmap;
 public:
-    Monedas(float posx_, float posy_,int pos);
+    Monedas(float posx_, float posy_);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);

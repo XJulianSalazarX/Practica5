@@ -1,20 +1,18 @@
 #include "laberinto.h"
 
-laberinto::laberinto(int w_,int h_, int x, int y)
+laberinto::laberinto(int w_, int h_, int x, int y)
 {
-   w = w_;
-   h = h_;
-   posx = x;
-   posy = y;
+    posx = x;
+    posy = y;
+    setPixmap(QPixmap(":/imagenes/muro_opt.jpg").scaled(w_,h_));
 }
 
-QRectF laberinto::boundingRect() const
+int laberinto::getPosx() const
 {
-       return QRectF(-posx, -posy,w,h);
+    return posx;
 }
 
-void laberinto::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+int laberinto::getPosy() const
 {
-    painter->setBrush(Qt::blue);
-    painter->drawRect((boundingRect()));
+    return posy;
 }

@@ -1,9 +1,7 @@
 #include "monedas.h"
 
-Monedas::Monedas(float posx_, float posy_,int pos)
+Monedas::Monedas(float posx_, float posy_)
 {
-    posicion = pos;
-
     timer = new QTimer();
     filas=0;
     columnas=0;

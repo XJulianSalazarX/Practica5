@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     //escena
     scene = new QGraphicsScene(0,0,748,880);
-    scene->setBackgroundBrush(QPixmap(":/imagenes/concrete.png"));
+    scene->setBackgroundBrush(QPixmap(":/imagenes/mapa3.jpg"));
     ui->graphicsView->setScene(scene);
 
     //pacman
@@ -17,7 +17,11 @@ MainWindow::MainWindow(QWidget *parent)
     pacman->setPos(pacman->getPosx(),pacman->getPosy());
 
     //laberinto
-    ConstruirMuro();
+    //ConstruirMuro();
+    //muro prueba
+    muro1 = new laberinto(91,92,42,44);
+    scene->addItem(muro1);
+    muro1->setPos(muro1->getPosx(),muro1->getPosy());
 
     //monedas
     ConstruirMonedas();
@@ -33,26 +37,26 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
     if(evento->key() == Qt::Key_A && pacman->x()>=20){
         pacman->setRotation(180);
         pacman->Left();
-        if(Chocar()) pacman->Right();
+        //if(Chocar()) pacman->Right();
         ComerMonedas();
 
     }
     else if(evento->key() == Qt::Key_D && pacman->x()<=730){
         pacman->setRotation(0);
         pacman->Right();
-        if(Chocar()) pacman->Left();
+        //if(Chocar()) pacman->Left();
         ComerMonedas();
     }
     else if(evento->key() == Qt::Key_W && pacman->y()>=20){
         pacman->setRotation(270);
         pacman->Up();
-        if(Chocar()) pacman->Down();
+        //if(Chocar()) pacman->Down();
         ComerMonedas();
     }
     else if(evento->key() == Qt::Key_S && pacman->y()<=860){
         pacman->setRotation(90);
         pacman->Down();
-        if(Chocar()) pacman->Up();
+        //if(Chocar()) pacman->Up();
         ComerMonedas();
     }
 }
@@ -61,12 +65,11 @@ void MainWindow::ConstruirMonedas()
 {
     //total de monedas 160
     float posx=22,posy=30;
-    int pos = 0;
     Monedas *moneda;
     QList<Monedas>::iterator it;
-    for(int i=0;i<181;pos++){
+    for(int i=0;i<181;){
        if(!ComprobarMuro(posx,posy)){
-       moneda = new Monedas(posx,posy,pos);
+       moneda = new Monedas(posx,posy);
        coins.push_back(moneda);
        i++;
        }

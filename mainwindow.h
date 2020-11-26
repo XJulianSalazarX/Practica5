@@ -31,11 +31,13 @@ private:
     Personajes *pacman;
     Monedas *moneda;
     QList<Monedas *> coins;
+    laberinto *muro1;
 
     void keyPressEvent(QKeyEvent *evento);
-
+    //paredes
     void ConstruirMuro();
     bool Chocar();
+    //monedas
     void ConstruirMonedas();
     void ComerMonedas();
     bool ComprobarMuro(float posx,float posy);
