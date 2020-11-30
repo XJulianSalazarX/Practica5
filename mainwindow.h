@@ -9,6 +9,7 @@
 #include "personajes.h"
 #include "monedas.h"
 #include "laberinto.h"
+#include "score.h"
 #include <QList>
 
 QT_BEGIN_NAMESPACE
@@ -23,6 +24,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_playButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -32,7 +36,15 @@ private:
     Monedas *moneda;
     QList<Monedas *> coins;
     laberinto *muro1;
+    Score *score;
 
+    //escenas
+    void scene1();
+    void scene2();
+    void scene3();
+
+
+    //movimiento
     void keyPressEvent(QKeyEvent *evento);
     //paredes
     void ConstruirMuro();

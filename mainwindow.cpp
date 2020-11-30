@@ -6,10 +6,59 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //escena
-    scene = new QGraphicsScene(0,0,748,880);
-    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_blanco.jpg"));
+
+    this->scene1();
+
+//    //escena
+//    scene = new QGraphicsScene(0,0,748,880);
+//    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_prueba.png"));
+//    ui->graphicsView->setScene(scene);
+
+//    //pacman
+//    pacman = new Personajes();
+//    scene->addItem(pacman);
+//    pacman->setPos(pacman->getPosx(),pacman->getPosy());
+
+//    //laberinto
+//    ConstruirMuro();
+
+//    //monedas
+//    ConstruirMonedas();
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::scene1()
+{
+    this->setGeometry(700,200,620,730);
+    this->setMinimumSize(width(),height());
+    this->setMaximumSize(width(),height());
+    scene = new QGraphicsScene();
+    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_Mesa.png").scaled(width()-20,height()-30));
     ui->graphicsView->setScene(scene);
+    ui->graphicsView->setFixedSize(width()-20,height()-30);
+    ui->graphicsView->setSceneRect(0,0,width()-20,height()-30);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    ui->playButton->setGeometry(200,250,100,50);
+}
+
+void MainWindow::scene2()
+{
+    //escena
+    this->setMinimumSize(770,912);
+    this->setMaximumSize(770,912);
+    this->setGeometry(700,100,770,912);
+    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_prueba.png"));
+    ui->graphicsView->setScene(scene);
+    ui->graphicsView->setFixedSize(width()-20,height()-30);
+    ui->graphicsView->setSceneRect(0,0,width()-20,height()-30);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     //pacman
     pacman = new Personajes();
@@ -21,11 +70,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     //monedas
     ConstruirMonedas();
+
+    //puntaje
+    score = new Score();
+    scene->addItem(score);
 }
 
-MainWindow::~MainWindow()
+void MainWindow::scene3()
 {
-    delete ui;
+    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_Mesa.jpg"));
+}
+
+void MainWindow::on_playButton_clicked()
+{
+    ui->playButton->setVisible(false);
+    scene2();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *evento)
@@ -62,7 +121,6 @@ void MainWindow::ConstruirMonedas()
     //total de monedas 160
     float posx=22,posy=30;
     Monedas *moneda;
-    QList<Monedas>::iterator it;
     for(int i=0;i<181;){
        if(!ComprobarMuro(posx,posy)){
        moneda = new Monedas(posx,posy);
@@ -85,11 +143,15 @@ void MainWindow::ConstruirMonedas()
 void MainWindow::ComerMonedas()
 {
     int pos = 0;
+    if(coins.size()==0){
+        scene3();
+    }
     for(Monedas *i : coins){
         if(pacman->collidesWithItem(i)){
             scene->removeItem(i);
             delete i;
             coins.removeAt(pos);
+            score->increase();
             break;
         }
         pos ++;

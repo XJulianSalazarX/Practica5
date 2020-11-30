@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QString>
+#include <QDebug>
 
 class Personajes : public QObject, public QGraphicsItem
 {
