@@ -2,10 +2,18 @@
 #define HEALTH_H
 
 
-class Health
+#include <QGraphicsTextItem>
+#include <QFont>
+
+class Health: public QGraphicsTextItem
 {
 public:
-    Health();
+    Health(QGraphicsItem *parent = 0);
+    void decrease();
+    int getHealth() const;
+
+private:
+    int health;
 };
 
 #endif // HEALTH_H

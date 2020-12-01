@@ -54,17 +54,88 @@
    <widget class="QPushButton" name="playButton">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>100</y>
+      <x>30</x>
+      <y>20</y>
       <width>131</width>
       <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-image: url(:/imagenes/play_button.jpg);</string>
+     <string notr="true">border-image: url(:/imagenes/boton_play.png);</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>100</y>
+      <width>251</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 60pt &quot;Papyrus&quot;;
+color: rgb(227, 13, 18);
+</string>
+    </property>
+    <property name="text">
+     <string>Puntaje:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>260</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 16pt &quot;Papyrus&quot;;
+color: rgb(227, 13, 18);
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(171, 171, 171, 255), stop:1 rgba(255, 255, 255, 255));</string>
+    </property>
+    <property name="text">
+     <string>NEW GAME</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="closeButton">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>340</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 16pt &quot;Papyrus&quot;;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(171, 171, 171, 255), stop:1 rgba(255, 255, 255, 255));
+color: rgb(227, 13, 18);</string>
+    </property>
+    <property name="text">
+     <string>CLOSE</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>430</y>
+      <width>191</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 30pt &quot;Papyrus&quot;;
+color: rgb(227, 13, 18);</string>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
   </widget>

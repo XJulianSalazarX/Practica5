@@ -5,9 +5,6 @@ Personajes::Personajes(QObject *parent) : QObject(parent)
     timer = new QTimer();
     filas = 0;
     columnas = 0;
-    begin = 0;
-    suma = 31.25;
-    end = 125;
     pixmap = new QPixmap(":/imagenes/PACMAN (2).png");
 
     posy = 865;
@@ -22,28 +19,6 @@ Personajes::Personajes(QObject *parent) : QObject(parent)
 
 }
 
-Personajes::Personajes(QString nombre, float ancho_, float alto_, int posx_, int posy_)
-{
-    timer = new QTimer();
-    filas = 0;
-    columnas = 0;
-    begin = 0;
-    suma = 24;
-    end = 48;
-
-    pixmap = new QPixmap(nombre);
-
-    posx = posx_;
-    posy = posy_;
-    velocidad = 5;
-
-    //dimensiones de la imagen
-    ancho = ancho_;
-    alto = alto_;
-    timer->start(300);
-    connect(timer,&QTimer::timeout,this,&Personajes::Actualizacion);
-
-}
 int Personajes::getPosx() const
 {
     return posx;
@@ -102,9 +77,9 @@ void Personajes::Right()
 
 void Personajes::Actualizacion()
 {
-    columnas += suma;
-    if(columnas >= end){
-        columnas = begin;
+    columnas += 31.25;
+    if(columnas >= 125){
+        columnas = 0;
     }
     this->update(-ancho/2,-alto/2,ancho,alto);
 }

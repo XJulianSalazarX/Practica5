@@ -1,5 +1,5 @@
-#ifndef PERSONAJES_H
-#define PERSONAJES_H
+#ifndef ENEMY_H
+#define ENEMY_H
 
 #include <QObject>
 #include <QGraphicsItem>
@@ -9,18 +9,18 @@
 #include <QString>
 #include <QDebug>
 
-class Personajes : public QObject, public QGraphicsItem
+class Enemy: public QObject, public QGraphicsItem
 {
     Q_OBJECT
-
     int posx,posy;
     int velocidad;
     float ancho,alto;
-    float filas,columnas;
+    float filas;
     QTimer *timer;
     QPixmap *pixmap;
+
 public:
-    explicit Personajes(QObject *parent = nullptr);
+    Enemy(QString nombre,float posx_,float posy_);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
@@ -29,15 +29,9 @@ public:
     void Left();
     void Right();
 
-    int getPosx() const;
-    void setPosx(int value);
-    int getPosy() const;
-    void setPosy(int value);
-
 signals:
 public slots:
     void Actualizacion();
-
 };
 
-#endif // PERSONAJES_H
+#endif // ENEMY_H

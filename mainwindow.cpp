@@ -7,23 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->scene1();
-
-//    //escena
-//    scene = new QGraphicsScene(0,0,748,880);
-//    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_prueba.png"));
-//    ui->graphicsView->setScene(scene);
-
-//    //pacman
-//    pacman = new Personajes();
-//    scene->addItem(pacman);
-//    pacman->setPos(pacman->getPosx(),pacman->getPosy());
-
-//    //laberinto
-//    ConstruirMuro();
-
-//    //monedas
-//    ConstruirMonedas();
+    scene1();
 }
 
 MainWindow::~MainWindow()
@@ -33,25 +17,28 @@ MainWindow::~MainWindow()
 
 void MainWindow::scene1()
 {
-    this->setGeometry(700,200,620,730);
+    ui->label->setVisible(false);
+    ui->label_2->setVisible(false);
+    ui->closeButton->setVisible(false);
+    ui->pushButton->setVisible(false);
+
+    this->setGeometry(700,100,770,912);
     this->setMinimumSize(width(),height());
     this->setMaximumSize(width(),height());
     scene = new QGraphicsScene();
-    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_Mesa.png").scaled(width()-20,height()-30));
+    scene->setBackgroundBrush(QPixmap(":/imagenes/inicio.png").scaled(width()-20,height()-30));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setFixedSize(width()-20,height()-30);
     ui->graphicsView->setSceneRect(0,0,width()-20,height()-30);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    ui->playButton->setGeometry(200,250,100,50);
+    ui->playButton->setGeometry(250,500,277,107);
 }
 
 void MainWindow::scene2()
 {
     //escena
-    this->setMinimumSize(770,912);
-    this->setMaximumSize(770,912);
     this->setGeometry(700,100,770,912);
     scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_prueba.png"));
     ui->graphicsView->setScene(scene);
@@ -74,11 +61,36 @@ void MainWindow::scene2()
     //puntaje
     score = new Score();
     scene->addItem(score);
+
+    //salud
+    health = new Health();
+    scene->addItem(health);
+    health->setY(health->y()+25);
+    //sonido
+    sound = new QMediaPlayer();
+    sound->setMedia(QUrl("qrc:/musica/kart-mario.mp3"));
+    //sound->play();
+
+    //fantasmas
+    CrearFantasmas();
+    timerG = new QTimer();
+    connect(timerG,SIGNAL(timeout()),this,SLOT(moveGhosts()));
+    timerG->start(40);
 }
 
 void MainWindow::scene3()
 {
-    scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_Mesa.jpg"));
+    scene->setBackgroundBrush(QPixmap(":/imagenes/end.png"));
+    ui->label->setVisible(true);
+    ui->label->setGeometry(150,0,500,400);
+    ui->label_2->setVisible(true);
+    ui->label_2->setText(QString::number(score->getScore()));
+    ui->label_2->setGeometry(300,250,400,200);
+    ui->pushButton->setVisible(true);
+    ui->pushButton->setGeometry(100,600,250,100);
+    ui->closeButton->setVisible(true);
+    ui->closeButton->setGeometry(400,600,250,100);
+
 }
 
 void MainWindow::on_playButton_clicked()
@@ -113,6 +125,61 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
         pacman->Down();
         if(Chocar()) pacman->Up();
         ComerMonedas();
+    }
+}
+
+void MainWindow::CrearFantasmas()
+{
+    Enemy *enemy = new Enemy(":/imagenes/red_ghost.png",20,250);
+    ghosts.push_back(enemy);
+    enemy = new Enemy(":/imagenes/pink_ghost.png",730,250);
+    ghosts.push_back(enemy);
+    enemy = new Enemy(":/imagenes/blue_ghost.png",20,600);
+    ghosts.push_back(enemy);
+    enemy = new Enemy(":/imagenes/orange_ghost.png",730,600);
+    ghosts.push_back(enemy);
+
+    for(Enemy *i : ghosts){
+        scene->addItem(i);
+
+    }
+
+}
+
+void MainWindow::ChocarFantasma()
+{
+    for(Enemy *i : ghosts){
+        if(pacman->collidesWithItem(i)){
+            health->decrease();
+            pacman->setPosx(370);
+            pacman->setPosy(865);
+            pacman->setPos(pacman->getPosx(),pacman->getPosy());
+            if(health->getHealth()==0){
+                scene3();
+            }
+        }
+    }
+}
+
+void MainWindow::moveGhosts()
+{
+    for(short pos=0;pos<2;pos++){
+        if(ghosts[pos]->x() < pacman->x()){
+            ghosts[pos]->Right();
+            ChocarFantasma();
+        }
+        else if(ghosts[pos]->x() > pacman->x()){
+            ghosts[pos]->Left();
+            ChocarFantasma();
+        }
+        else if(ghosts[pos]->y() < pacman->y()){
+            ghosts[pos]->Down();
+            ChocarFantasma();
+        }
+        else if(ghosts[pos]->y() > pacman->y()){
+            ghosts[pos]->Up();
+            ChocarFantasma();
+        }
     }
 }
 
@@ -269,4 +336,9 @@ bool MainWindow::Chocar()
 
     return false;
 
+}
+
+void MainWindow::on_closeButton_clicked()
+{
+    close();
 }

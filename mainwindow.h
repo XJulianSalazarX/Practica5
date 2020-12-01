@@ -10,7 +10,10 @@
 #include "monedas.h"
 #include "laberinto.h"
 #include "score.h"
+#include "enemy.h"
 #include <QList>
+#include <QMediaPlayer>
+#include "health.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,6 +29,9 @@ public:
 
 private slots:
     void on_playButton_clicked();
+    void on_closeButton_clicked();
+    void moveGhosts();
+
 
 private:
     Ui::MainWindow *ui;
@@ -37,22 +43,34 @@ private:
     QList<Monedas *> coins;
     laberinto *muro1;
     Score *score;
+    Health *health;
+    QList<Enemy *> ghosts;
+    QTimer *timerG;
+
 
     //escenas
     void scene1();
     void scene2();
     void scene3();
-
+    void scene4();
 
     //movimiento
     void keyPressEvent(QKeyEvent *evento);
+
     //paredes
     void ConstruirMuro();
     bool Chocar();
+
     //monedas
     void ConstruirMonedas();
     void ComerMonedas();
     bool ComprobarMuro(float posx,float posy);
+
+    //fantasmas
+    void CrearFantasmas();
+    void ChocarFantasma();
+    //sonido
+    QMediaPlayer *sound;
 
     laberinto *pared1, *pared2, *pared3, *pared4, *pared5, *pared6, *pared7, *pared8, *pared9,
     *pared10, *pared11, *pared12, *pared13, *pared14, *pared15, *pared16, *pared17, *pared18,

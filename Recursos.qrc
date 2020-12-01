@@ -5,5 +5,13 @@
         <file>imagenes/fondo_prueba.png</file>
         <file>imagenes/PACMAN (2).png</file>
         <file>imagenes/play_button.jpg</file>
+        <file>musica/kart-mario.mp3</file>
+        <file>imagenes/boton_play.png</file>
+        <file>imagenes/inicio.png</file>
+        <file>imagenes/end.png</file>
+        <file>imagenes/blue_ghost.png</file>
+        <file>imagenes/orange_ghost.png</file>
+        <file>imagenes/pink_ghost.png</file>
+        <file>imagenes/red_ghost.png</file>
     </qresource>
 </RCC>
