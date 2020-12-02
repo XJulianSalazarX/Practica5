@@ -12,12 +12,14 @@
 class Enemy: public QObject, public QGraphicsItem
 {
     Q_OBJECT
+
     int posx,posy;
     int velocidad;
     float ancho,alto;
     float filas;
     QTimer *timer;
     QPixmap *pixmap;
+    float begin;
 
 public:
     Enemy(QString nombre,float posx_,float posy_);

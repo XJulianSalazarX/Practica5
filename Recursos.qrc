@@ -13,5 +13,6 @@
         <file>imagenes/orange_ghost.png</file>
         <file>imagenes/pink_ghost.png</file>
         <file>imagenes/red_ghost.png</file>
+        <file>imagenes/dead_pacman.png</file>
     </qresource>
 </RCC>
