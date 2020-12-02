@@ -18,7 +18,9 @@ class Personajes : public QObject, public QGraphicsItem
     float ancho,alto;
     float filas,columnas;
     QTimer *timer;
+    QTimer *timerD;
     QPixmap *pixmap;
+
 public:
     explicit Personajes(QObject *parent = nullptr);
 
@@ -34,9 +36,13 @@ public:
     int getPosy() const;
     void setPosy(int value);
 
+    void DeadPacman();
+    void AlivePacman();
+
 signals:
 public slots:
     void Actualizacion();
+    void Morir();
 
 };
 

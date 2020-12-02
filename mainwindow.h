@@ -31,13 +31,17 @@ private slots:
     void on_playButton_clicked();
     void on_closeButton_clicked();
     void moveGhosts();
+    void move();
+    void ChocarFantasma();
+    void Music();
+    void startTimerG();
 
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
-    float x,y;
+    QString key;
     Personajes *pacman;
     Monedas *moneda;
     QList<Monedas *> coins;
@@ -46,7 +50,8 @@ private:
     Health *health;
     QList<Enemy *> ghosts;
     QTimer *timerG;
-
+    QTimer *timerM;
+    QTimer *timer;
 
     //escenas
     void scene1();
@@ -68,7 +73,6 @@ private:
 
     //fantasmas
     void CrearFantasmas();
-    void ChocarFantasma();
     //sonido
     QMediaPlayer *sound;
 

@@ -69,13 +69,21 @@ void MainWindow::scene2()
     //sonido
     sound = new QMediaPlayer();
     sound->setMedia(QUrl("qrc:/musica/kart-mario.mp3"));
-    //sound->play();
+    sound->play();
+    timerM = new QTimer();
+    connect(timerM,SIGNAL(timeout()),this,SLOT(Music()));
+    timerM->start(30000);
 
     //fantasmas
     CrearFantasmas();
     timerG = new QTimer();
     connect(timerG,SIGNAL(timeout()),this,SLOT(moveGhosts()));
+    connect(timerG,SIGNAL(timeout()),this,SLOT(move()));
+    connect(timerG,SIGNAL(timeout()),this,SLOT(ChocarFantasma()));
     timerG->start(40);
+
+    timer = new QTimer();
+    connect(timer,SIGNAL(timeout()),this,SLOT(startTimerG()));
 }
 
 void MainWindow::scene3()
@@ -101,26 +109,33 @@ void MainWindow::on_playButton_clicked()
 
 void MainWindow::keyPressEvent(QKeyEvent *evento)
 {
-    if(evento->key() == Qt::Key_A && pacman->x()>=20){
+    if(evento->key() == Qt::Key_A) key = "A";
+    else if(evento->key() == Qt::Key_D) key = "D";
+    else if(evento->key() == Qt::Key_W) key = "W";
+    else if(evento->key() == Qt::Key_S) key = "S";
+}
+
+void MainWindow::move()
+{
+    if(key == "A" && pacman->x()>=20){
         pacman->setRotation(180);
         pacman->Left();
         if(Chocar()) pacman->Right();
         ComerMonedas();
-
     }
-    else if(evento->key() == Qt::Key_D && pacman->x()<=730){
+    if(key == "D" && pacman->x()<=730){
         pacman->setRotation(0);
         pacman->Right();
         if(Chocar()) pacman->Left();
         ComerMonedas();
     }
-    else if(evento->key() == Qt::Key_W && pacman->y()>=20){
+    if(key == "W" && pacman->y()>=20){
         pacman->setRotation(270);
         pacman->Up();
         if(Chocar()) pacman->Down();
         ComerMonedas();
     }
-    else if(evento->key() == Qt::Key_S && pacman->y()<=860){
+    if(key == "S" && pacman->y()<=860){
         pacman->setRotation(90);
         pacman->Down();
         if(Chocar()) pacman->Up();
@@ -150,13 +165,17 @@ void MainWindow::ChocarFantasma()
 {
     for(Enemy *i : ghosts){
         if(pacman->collidesWithItem(i)){
+
+            key = " ";
             health->decrease();
-            pacman->setPosx(370);
-            pacman->setPosy(865);
-            pacman->setPos(pacman->getPosx(),pacman->getPosy());
+            pacman->DeadPacman();
+            //pacman->setPos(pacman->getPosx(),pacman->getPosy());
             if(health->getHealth()==0){
                 scene3();
             }
+            timerG->stop();
+            timer->start(2000);
+
         }
     }
 }
@@ -166,19 +185,15 @@ void MainWindow::moveGhosts()
     for(short pos=0;pos<2;pos++){
         if(ghosts[pos]->x() < pacman->x()){
             ghosts[pos]->Right();
-            ChocarFantasma();
         }
         else if(ghosts[pos]->x() > pacman->x()){
             ghosts[pos]->Left();
-            ChocarFantasma();
         }
         else if(ghosts[pos]->y() < pacman->y()){
             ghosts[pos]->Down();
-            ChocarFantasma();
         }
         else if(ghosts[pos]->y() > pacman->y()){
             ghosts[pos]->Up();
-            ChocarFantasma();
         }
     }
 }
@@ -341,4 +356,16 @@ bool MainWindow::Chocar()
 void MainWindow::on_closeButton_clicked()
 {
     close();
+}
+
+void MainWindow::Music()
+{
+    sound->play();
+}
+
+void MainWindow::startTimerG()
+{
+    timerG->start(40);
+    timer->stop();
+    //pacman->setPos(370,865);
 }

@@ -6,10 +6,12 @@ Enemy::Enemy(QString nombre,float posx_,float posy_)
     filas = 0;
     pixmap = new QPixmap(nombre);
 
-    posy = posy_;
     posx = posx_;
-    this->setPos(posx,posy);
+    posy = posy_;
+    this->setPos(posx_,posy_);
     velocidad =3;
+
+    begin = 0;
 
     //dimensiones de la imagen
      ancho = 30;
@@ -32,24 +34,32 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Enemy::Up()
 {
+    begin = 216;
+    filas = begin;
     posy -= velocidad;
     setPos(posx,posy);
 }
 
 void Enemy::Down()
 {
+    begin = 72;
+    filas = begin;
     posy += velocidad;
     setPos(posx,posy);
 }
 
 void Enemy::Left()
 {
+    begin = 144;
+    filas = begin;
     posx -= velocidad;
     setPos(posx,posy);
 }
 
 void Enemy::Right()
 {
+    begin = 0;
+    filas = begin;
     posx += velocidad;
     setPos(posx,posy);
 }
@@ -57,8 +67,8 @@ void Enemy::Right()
 void Enemy::Actualizacion()
 {
     filas += 36;
-    if(filas >= 72){
-        filas = 0;
+    if(filas >= 72+begin){
+        filas = begin;
     }
     this->update(-ancho/2,-alto/2,ancho,alto);
 }
