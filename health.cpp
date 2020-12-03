@@ -22,4 +22,5 @@ int Health::getHealth() const
 void Health::setHealth(int value)
 {
     health = value;
+    setPlainText(QString("Health: ") + QString::number(health));
 }

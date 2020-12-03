@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete scene;
     delete pacman;
     for(Monedas *i : coins)
         delete i;
@@ -30,6 +29,9 @@ MainWindow::~MainWindow()
     delete timerM;
     delete timerPac;
     delete timer;
+    delete sound;
+    delete soundDead;
+    delete soundVictory;
 }
 
 void MainWindow::scene1()
@@ -74,6 +76,8 @@ void MainWindow::scene1()
     sound->setMedia(QUrl("qrc:/musica/kart-mario.mp3"));
     soundDead = new QMediaPlayer();
     soundDead->setMedia(QUrl("qrc:/musica/pacman-dead.mp3"));
+    soundVictory = new QMediaPlayer();
+    soundVictory->setMedia(QUrl("qrc:/musica/victory.mp3"));
 
     //Qtimers
     timerM = new QTimer();
@@ -105,7 +109,7 @@ void MainWindow::scene2()
         scene->addItem(score);
         //salud
         scene->addItem(health);
-        health->setY(health->y()+25);
+        health->setY(score->y()+25);
         //fantasmas
         for(Enemy *i : ghosts){
             scene->addItem(i);
@@ -261,7 +265,7 @@ void MainWindow::ChocarFantasma()
 void MainWindow::ConstruirMonedas()
 {
     float posx=22,posy=23;
-    for(int i=0;i<180;i++){
+    for(int i=0;i<181;i++){
         coins.push_back(new Monedas(posx,posy));
         scene->addItem(coins[i]);
         coins[i]->setPos(coins[i]->getPosx(),coins[i]->getPosy());
@@ -286,6 +290,7 @@ void MainWindow::ComerMonedas()
 {
     int pos = 0;
     if(coins.size()==0){
+        soundVictory->play();
         scene3();
     }
     for(Monedas *i : coins){

@@ -85,5 +85,6 @@ private:
     //sonido
     QMediaPlayer *sound;
     QMediaPlayer *soundDead;
+    QMediaPlayer *soundVictory;
 };
 #endif // MAINWINDOW_H

@@ -15,5 +15,6 @@
         <file>imagenes/dead_pacman.png</file>
         <file>mapa/laberinto.txt</file>
         <file>musica/pacman-dead.mp3</file>
+        <file>musica/victory.mp3</file>
     </qresource>
 </RCC>
