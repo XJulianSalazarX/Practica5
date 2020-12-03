@@ -90,11 +90,6 @@ void MainWindow::scene2()
 {
     //escena
     scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_prueba.png"));
-    ui->graphicsView->setScene(scene);
-    ui->graphicsView->setFixedSize(width()-20,height()-30);
-    ui->graphicsView->setSceneRect(0,0,width()-20,height()-30);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     if(!gameCreated){
         //pacman
