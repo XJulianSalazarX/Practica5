@@ -56,9 +56,10 @@ void Personajes::AlivePacman()
     pixmap = new QPixmap(":/imagenes/PACMAN (2).png");
     ancho = 31.25;
     timer->start(120);
+    if(posy>600) posy = 338;
+    else posy = 865;
     posx = 370;
-    posy = 865;
-    this->setPos(370,865);
+    this->setPos(posx,posy);
 }
 
 QRectF Personajes::boundingRect() const
