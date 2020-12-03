@@ -6,17 +6,35 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    srand(time(NULL));
     scene1();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete scene;
+    delete pacman;
+    for(Monedas *i : coins)
+        delete i;
+    coins.clear();
+    delete score;
+    delete health;
+    for(Enemy *i : ghosts)
+        delete i;
+    ghosts.clear();
+    for(laberinto *i : paredes)
+        delete i;
+    paredes.clear();
+    delete timerG;
+    delete timerM;
+    delete timerPac;
+    delete timer;
 }
 
 void MainWindow::scene1()
 {
+    //escena
     ui->label->setVisible(false);
     ui->label_2->setVisible(false);
     ui->closeButton->setVisible(false);
@@ -34,6 +52,34 @@ void MainWindow::scene1()
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->playButton->setGeometry(250,500,277,107);
+
+    //personajes
+    //pacman
+    pacman = new Personajes();
+
+    //laberinto
+    crearLaberinto();
+
+    //fantasmas
+    CrearFantasmas();
+
+    //puntaje
+    score = new Score();
+
+    //salud
+    health = new Health();
+
+    //sonido
+    sound = new QMediaPlayer();
+    sound->setMedia(QUrl("qrc:/musica/kart-mario.mp3"));
+    soundDead = new QMediaPlayer();
+    soundDead->setMedia(QUrl("qrc:/musica/pacman-dead.mp3"));
+
+    //Qtimers
+    timerM = new QTimer();
+    timerG = new QTimer();
+    timerPac = new QTimer();
+    timer = new QTimer();
 }
 
 void MainWindow::scene2()
@@ -47,47 +93,88 @@ void MainWindow::scene2()
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    //pacman
-    pacman = new Personajes();
-    scene->addItem(pacman);
-    pacman->setPos(pacman->getPosx(),pacman->getPosy());
-
-    //laberinto
-    ConstruirMuro();
-
+    if(!gameCreated){
+        //pacman
+        scene->addItem(pacman);
+        pacman->setPos(pacman->getPosx(),pacman->getPosy());
+        //laberinto
+        agregarLaberinto();
+        //monedas
+        ConstruirMonedas();
+        //puntaje
+        scene->addItem(score);
+        //salud
+        scene->addItem(health);
+        health->setY(health->y()+25);
+        //fantasmas
+        for(Enemy *i : ghosts){
+            scene->addItem(i);
+        }
+    }
+    else{
+        pacman->setPos(pacman->getPosx(),pacman->getPosy());
+        health->setY(health->y()+25);
+        for(Enemy *i : ghosts)
+            i->setPos(i->getPosx(),i->getPosy());
+    }
     //monedas
     ConstruirMonedas();
-
-    //puntaje
-    score = new Score();
-    scene->addItem(score);
-
-    //salud
-    health = new Health();
-    scene->addItem(health);
-    health->setY(health->y()+25);
     //sonido
-    sound = new QMediaPlayer();
-    sound->setMedia(QUrl("qrc:/musica/kart-mario.mp3"));
     sound->play();
-    timerM = new QTimer();
+    //timers
+    connect(timerPac,SIGNAL(timeout()),this,SLOT(ChocarFantasma()));
+    connect(timerPac,SIGNAL(timeout()),this,SLOT(move()));
+    timerPac->start(40);
+
+    connect(timerG,SIGNAL(timeout()),this,SLOT(moveRedGhost()));
+    connect(timerG,SIGNAL(timeout()),this,SLOT(moveOrangeGhost()));
+    connect(timerG,SIGNAL(timeout()),this,SLOT(moveBlueGhost()));
+    connect(timerG,SIGNAL(timeout()),this,SLOT(movePinkGhost()));
+    timerG->start(50);
+
+    connect(timer,SIGNAL(timeout()),this,SLOT(startTimerG()));
+
     connect(timerM,SIGNAL(timeout()),this,SLOT(Music()));
     timerM->start(30000);
-
-    //fantasmas
-    CrearFantasmas();
-    timerG = new QTimer();
-    connect(timerG,SIGNAL(timeout()),this,SLOT(moveGhosts()));
-    connect(timerG,SIGNAL(timeout()),this,SLOT(move()));
-    connect(timerG,SIGNAL(timeout()),this,SLOT(ChocarFantasma()));
-    timerG->start(40);
-
-    timer = new QTimer();
-    connect(timer,SIGNAL(timeout()),this,SLOT(startTimerG()));
 }
 
 void MainWindow::scene3()
 {
+    //desconectar y parar Qtimers
+    sound->stop();
+    timerM->stop();
+    disconnect(timerM,SIGNAL(timeout()),this,SLOT(Music()));
+
+    timerPac->stop();
+    disconnect(timerPac,SIGNAL(timeout()),this,SLOT(move()));
+    disconnect(timerPac,SIGNAL(timeout()),this,SLOT(ChocarFantasma()));
+
+    timerG->stop();
+    disconnect(timerG,SIGNAL(timeout()),this,SLOT(moveRedGhost()));
+    disconnect(timerG,SIGNAL(timeout()),this,SLOT(moveOrangeGhost()));
+    disconnect(timerG,SIGNAL(timeout()),this,SLOT(moveBlueGhost()));
+    disconnect(timerG,SIGNAL(timeout()),this,SLOT(movePinkGhost()));
+
+    timer->stop();
+    disconnect(timer,SIGNAL(timeout()),this,SLOT(startTimerG()));
+
+    //quitar elementos de scena
+    health->setVisible(false);
+    score->setVisible(false);
+    pacman->setVisible(false);
+    for(Enemy *i : ghosts)
+        i->setVisible(false);
+    for(laberinto *i : paredes)
+        i->setVisible(false);
+    if(!coins.isEmpty()){
+        for(Monedas *i : coins){
+            scene->removeItem(i);
+            delete i;
+        }
+        coins.clear();
+    }
+
+    //scena
     scene->setBackgroundBrush(QPixmap(":/imagenes/end.png"));
     ui->label->setVisible(true);
     ui->label->setGeometry(150,0,500,400);
@@ -145,80 +232,53 @@ void MainWindow::move()
 
 void MainWindow::CrearFantasmas()
 {
-    Enemy *enemy = new Enemy(":/imagenes/red_ghost.png",20,250);
-    ghosts.push_back(enemy);
-    enemy = new Enemy(":/imagenes/pink_ghost.png",730,250);
-    ghosts.push_back(enemy);
-    enemy = new Enemy(":/imagenes/blue_ghost.png",20,600);
-    ghosts.push_back(enemy);
-    enemy = new Enemy(":/imagenes/orange_ghost.png",730,600);
-    ghosts.push_back(enemy);
-
-    for(Enemy *i : ghosts){
-        scene->addItem(i);
-
-    }
-
+    ghosts.push_back(new Enemy(":/imagenes/red_ghost.png",20,245,2));
+    ghosts.push_back(new Enemy(":/imagenes/pink_ghost.png",730,245,3));
+    ghosts.push_back(new Enemy(":/imagenes/blue_ghost.png",20,600,3));
+    ghosts.push_back(new Enemy(":/imagenes/orange_ghost.png",730,600,3));
 }
 
 void MainWindow::ChocarFantasma()
 {
     for(Enemy *i : ghosts){
         if(pacman->collidesWithItem(i)){
-
+            timerPac->stop();
+            timerG->stop();
+            timerM->stop();
+            sound->stop();
+            timer->start(2500);
             key = " ";
             health->decrease();
             pacman->DeadPacman();
-            //pacman->setPos(pacman->getPosx(),pacman->getPosy());
+            soundDead->play();
             if(health->getHealth()==0){
                 scene3();
             }
-            timerG->stop();
-            timer->start(2000);
-
-        }
-    }
-}
-
-void MainWindow::moveGhosts()
-{
-    for(short pos=0;pos<2;pos++){
-        if(ghosts[pos]->x() < pacman->x()){
-            ghosts[pos]->Right();
-        }
-        else if(ghosts[pos]->x() > pacman->x()){
-            ghosts[pos]->Left();
-        }
-        else if(ghosts[pos]->y() < pacman->y()){
-            ghosts[pos]->Down();
-        }
-        else if(ghosts[pos]->y() > pacman->y()){
-            ghosts[pos]->Up();
         }
     }
 }
 
 void MainWindow::ConstruirMonedas()
 {
-    //total de monedas 160
-    float posx=22,posy=30;
-    Monedas *moneda;
-    for(int i=0;i<181;){
-       if(!ComprobarMuro(posx,posy)){
-       moneda = new Monedas(posx,posy);
-       coins.push_back(moneda);
-       i++;
-       }
-       posx += 44.5;
+    float posx=22,posy=23;
+    for(int i=0;i<180;i++){
+        coins.push_back(new Monedas(posx,posy));
+        scene->addItem(coins[i]);
+        coins[i]->setPos(coins[i]->getPosx(),coins[i]->getPosy());
+        for(laberinto *pared : paredes){
+            if(coins[i]->collidesWithItem(pared) or coins[i]->collidesWithItem(pacman)){
+                scene->removeItem(coins[i]);
+                delete coins[i];
+                coins.removeAt(i);
+                i--;
+            }
+        }
+            posx += 44;
        if(posx>734){
            posx=22;
-           posy+=44;
+           if(posy<700) posy+=44;
+           else posy+=47;
        }
-    }
-
-    for(Monedas *i : coins){
-        scene->addItem(i);
-       i->setPos(i->getPosx(),i->getPosy());
     }
 }
 
@@ -240,122 +300,163 @@ void MainWindow::ComerMonedas()
     }
 }
 
-bool MainWindow::ComprobarMuro(float posx, float posy)
-{
-    if(posy ==30 or posy ==162 or posy==602 or posy==866){
-       if(posx==378) return true;
-    }
-    else if(posy == 74 or posy == 118){
-        if(posx==66.5 or posx==111 or posx==200 or posx==244.5 or posx==289 or posx==378
-        or posx==467 or posx==511.5 or posx==556 or posx==645 or posx==689.5) return true;
-    }
-    else if(posy == 206){
-        if(posx==66.5 or posx==111 or posx==200 or posx==289 or posx==333.5 or posx==378
-        or posx==422.5 or posx==467 or posx==556 or posx==645 or posx==689.5) return true;
-    }
-    else if(posy == 250){
-        if(posx==200 or posx==378 or posx==556) return true;
-    }
-    else if(posy == 294){
-        if(posx==22 or posx==66.5 or posx==111 or posx==200 or posx==244.5 or posx==289
-        or posx==378 or posx==467 or posx==511.5 or posx==556 or posx==645 or posx==689.5
-        or posx==734)return true;
-    }
-    else if(posy == 338){
-        if(posx==22 or posx==66.5 or posx==111 or posx==200 or posx==556 or posx==645
-        or posx==689.5 or posx==734)return true;
-    }
-    else if(posy == 382 or posy == 470 or posy == 558){
-        if(posx==22 or posx==66.5 or posx==111 or posx==200 or posx==289 or posx==333.5
-        or posx==378 or posx==422.5 or posx==467 or posx==556 or posx==645 or posx==689.5
-        or posx==734)return true;
-    }
-    else if(posy == 426){
-        if(posx==22 or posx==66.5 or posx==111 or posx==289 or posx==333.5 or posx==378
-        or posx==422.5 or posx==467 or posx==645 or posx==689.5 or posx==734) return true;
-    }
-    else if(posy == 514){
-        if(posx==22 or posx==66.5 or posx==111 or posx==200 or posx==556 or posx==645
-        or posx==689.5 or posx==734)return true;
-    }
-    else if(posy == 646){
-        if(posx==66.5 or posx==111 or posx==200 or posx==244.5 or posx==289 or posx==378
-        or posx==467 or posx==511.5 or posx==556 or posx==645 or posx==689.5)return true;
-    }
-    else if(posy == 690){
-        if(posx==111 or posx==645) return true;
-    }
-    else if(posy == 734){
-        if(posx==22 or posx==111 or posx==200  or posx==289 or posx==333.5 or posx==378
-        or posx==422.5 or posx==467 or posx==556 or posx==645 or posx==734) return true;
-    }
-    else if(posy == 778){
-        if( posx==200 or posx == 378  or posx==556) return true;
-    }
-    else if(posy == 822){
-        if(posx==66.5 or posx==111 or posx==155.5 or posx==200 or posx==244.5 or posx==289
-        or posx==378 or posx==467 or posx==511.5 or posx==556 or posx==600.5
-        or posx==645 or posx==689.5)return true;
-    }
-    return false;
-}
-
-void MainWindow::ConstruirMuro()
-{
-    pared1=new laberinto(91,92,42,42); pared2=new laberinto(134,92,175,42);
-    pared3=new laberinto(46,314,351,0); pared4=new laberinto(223,46,262,176);
-    pared5=new laberinto(134,92,439,42); pared6=new laberinto(91,92,615,42);
-    pared7=new laberinto(90,47,42,176); pared8=new laberinto(90,47,615,176);
-    pared9=new laberinto(46,223,174,176); pared10=new laberinto(88,47,220,267);
-    pared11=new laberinto(92,47,440,267); pared12=new laberinto(46,223,527,176);
-    pared13=new laberinto(224,136,262,355); pared14=new laberinto(134,312,0,267);
-    pared15=new laberinto(134,312,616,267); pared16=new laberinto(46,138,176,441);
-    pared17=new laberinto(46,138,527,441); pared18=new laberinto(223,46,262,533);
-    pared19=new laberinto(46,93,351,571); pared20=new laberinto(134,46,175,619);
-    pared21=new laberinto(134,46,440,619); pared22=new laberinto(91,46,42,619);
-    pared23=new laberinto(46,93,87,661); pared24=new laberinto(46,93,616,661);
-    pared25=new laberinto(91,46,616,619); pared26=new laberinto(46,46,0,710);
-    pared27=new laberinto(46,46,704,710); pared28=new laberinto(223,46,266,710);
-    pared29=new laberinto(46,93,352,754); pared30=new laberinto(267,46,42,800);
-    pared31=new laberinto(49,92,175,710); pared32=new laberinto(267,46,441,800);
-    pared33=new laberinto(49,92,527,710);
-
-    //gregar laberinto
-    scene->addItem(pared1); scene->addItem(pared2); scene->addItem(pared3);
-    scene->addItem(pared4); scene->addItem(pared5); scene->addItem(pared6);
-    scene->addItem(pared7); scene->addItem(pared8); scene->addItem(pared9);
-    scene->addItem(pared10); scene->addItem(pared11); scene->addItem(pared12);
-    scene->addItem(pared13); scene->addItem(pared14); scene->addItem(pared15);
-    scene->addItem(pared16); scene->addItem(pared17); scene->addItem(pared18);
-    scene->addItem(pared19); scene->addItem(pared20); scene->addItem(pared21);
-    scene->addItem(pared22); scene->addItem(pared23); scene->addItem(pared24);
-    scene->addItem(pared25); scene->addItem(pared26); scene->addItem(pared27);
-    scene->addItem(pared28); scene->addItem(pared29); scene->addItem(pared30);
-    scene->addItem(pared31); scene->addItem(pared32); scene->addItem(pared33);
-
-}
-
 bool MainWindow::Chocar()
 {
-    if (pacman->collidesWithItem(pared1)or pacman->collidesWithItem(pared2)or pacman->collidesWithItem(pared3)or
-    pacman->collidesWithItem(pared4)or pacman->collidesWithItem(pared5)or pacman->collidesWithItem(pared6)or
-    pacman->collidesWithItem(pared7)or pacman->collidesWithItem(pared8)or pacman->collidesWithItem(pared9)or
-    pacman->collidesWithItem(pared10)or pacman->collidesWithItem(pared11)or pacman->collidesWithItem(pared12)or
-    pacman->collidesWithItem(pared13)or pacman->collidesWithItem(pared14)or pacman->collidesWithItem(pared15)or
-    pacman->collidesWithItem(pared16)or pacman->collidesWithItem(pared17)or pacman->collidesWithItem(pared18)or
-    pacman->collidesWithItem(pared19)or pacman->collidesWithItem(pared20)or pacman->collidesWithItem(pared21)or
-    pacman->collidesWithItem(pared22)or pacman->collidesWithItem(pared23)or pacman->collidesWithItem(pared24)or
-    pacman->collidesWithItem(pared25)or pacman->collidesWithItem(pared26)or pacman->collidesWithItem(pared27)or
-    pacman->collidesWithItem(pared28)or pacman->collidesWithItem(pared29)or pacman->collidesWithItem(pared30)or
-    pacman->collidesWithItem(pared31)or pacman->collidesWithItem(pared32)or pacman->collidesWithItem(pared33)) return true;
-
+for(laberinto *i : paredes){
+    if(pacman->collidesWithItem(i)) return true;
+}
     return false;
 
+}
+
+bool MainWindow::ChoqueFantasmas(Enemy *enemy)
+{
+    for(laberinto *i : paredes){
+        if(enemy->collidesWithItem(i)) return true;
+    }
+    return false;
+}
+
+void MainWindow::crearLaberinto()
+{
+    QString line;
+    int pos;
+    float width_,height_,posx,posy;
+    QFile file(":/mapa/laberinto.txt");
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << "No se puede abrir el archivo.";
+        return;
+    }
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        //ancho
+        pos = line.indexOf(",");
+        width_ = line.mid(0,pos).toFloat();
+        line = line.mid(pos+1);
+        //alto
+        pos = line.indexOf(",");
+        height_ = line.mid(0,pos).toFloat();
+        line = line.mid(pos+1);
+        //posx
+        pos = line.indexOf(",");
+        posx = line.mid(0,pos).toFloat();
+        //posy
+        posy = line.mid(pos+1).toFloat();
+        paredes.push_back(new laberinto(width_,height_,posx,posy));
+    }
+    file.close();
+}
+
+void MainWindow::agregarLaberinto()
+{
+    for(laberinto *i : paredes)
+        scene->addItem(i);
 }
 
 void MainWindow::on_closeButton_clicked()
 {
     close();
+}
+
+void MainWindow::moveRedGhost()
+{
+    if(ghosts[0]->x() < pacman->x()){
+        ghosts[0]->Right();
+    }
+    if(ghosts[0]->x() > pacman->x()){
+        ghosts[0]->Left();
+    }
+    if(ghosts[0]->y() < pacman->y()){
+        ghosts[0]->Down();
+    }
+    if(ghosts[0]->y() > pacman->y()){
+        ghosts[0]->Up();
+    }
+}
+
+void MainWindow::moveOrangeGhost()
+{
+    if(orangeMove == 0){
+        ghosts[3]->Up();
+        if(ChoqueFantasmas(ghosts[3]) or ghosts[3]->y()<=20){
+            ghosts[3]->Down();
+            orangeMove = rand()%4;
+        }
+    }
+    else if(orangeMove == 1){
+        ghosts[3]->Down();
+        if(ChoqueFantasmas(ghosts[3])or ghosts[3]->y()>=860){
+            ghosts[3]->Up();
+            orangeMove = rand()%4;
+        }
+    }
+    else if(orangeMove == 2){
+        ghosts[3]->Right();
+        if(ChoqueFantasmas(ghosts[3]) or ghosts[3]->x()>=730){
+            ghosts[3]->Left();
+            orangeMove = rand()%4;
+        }
+    }
+    else if(orangeMove == 3){
+        ghosts[3]->Left();
+        if(ChoqueFantasmas(ghosts[3]) or ghosts[3]->x()<=20){
+            ghosts[3]->Right();
+            orangeMove = rand()%4;
+        }
+    }
+}
+
+void MainWindow::moveBlueGhost()
+{
+    if(blueMove == 0){
+        ghosts[2]->Up();
+        if(ChoqueFantasmas(ghosts[2]) or ghosts[2]->y()<=20){
+            ghosts[2]->Down();
+            blueMove = rand()%4;
+        }
+    }
+    else if(blueMove == 1){
+        ghosts[2]->Down();
+        if(ChoqueFantasmas(ghosts[2])or ghosts[2]->y()>=860){
+            ghosts[2]->Up();
+            blueMove = rand()%4;
+        }
+    }
+    else if(blueMove == 2){
+        ghosts[2]->Right();
+        if(ChoqueFantasmas(ghosts[2]) or ghosts[2]->x()>=730){
+            ghosts[2]->Left();
+            blueMove = rand()%4;
+        }
+    }
+    else if(blueMove == 3){
+        ghosts[2]->Left();
+        if(ChoqueFantasmas(ghosts[2]) or ghosts[2]->x()<=20){
+            ghosts[2]->Right();
+            blueMove = rand()%4;
+        }
+    }
+}
+
+void MainWindow::movePinkGhost()
+{
+    if(ghosts[1]->x() < pacman->x()){
+        ghosts[1]->Right();
+        if(ChoqueFantasmas(ghosts[1])) ghosts[1]->Left();
+    }
+    else if(ghosts[1]->x() > pacman->x()){
+        ghosts[1]->Left();
+        if(ChoqueFantasmas(ghosts[1])) ghosts[1]->Right();
+    }
+    if(ghosts[1]->y() < pacman->y()){
+        ghosts[1]->Down();
+        if(ChoqueFantasmas(ghosts[1])) ghosts[1]->Up();
+    }
+     else if(ghosts[1]->y() > pacman->y()){
+        ghosts[1]->Up();
+        if(ChoqueFantasmas(ghosts[1])) ghosts[1]->Down();
+    }
 }
 
 void MainWindow::Music()
@@ -365,7 +466,44 @@ void MainWindow::Music()
 
 void MainWindow::startTimerG()
 {
+    timerPac->start(40);
     timerG->start(40);
+    timerM->start(30000);
+    sound->play();
     timer->stop();
-    //pacman->setPos(370,865);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    gameCreated = true;
+    ui->label->setVisible(false);
+    ui->label_2->setVisible(false);
+    ui->closeButton->setVisible(false);
+    ui->pushButton->setVisible(false);
+    //Poner elementos en la escena
+    health->setVisible(true);
+    score->setVisible(true);
+    pacman->setVisible(true);
+    for(Enemy *i : ghosts)
+        i->setVisible(true);
+    for(laberinto *i : paredes)
+        i->setVisible(true);
+    //reconstruir posiciones de juego
+    //puntaje
+    score->setScore(0);
+    //salud
+    health->setHealth(3);
+    //pacman
+    pacman->setPosx(370);
+    pacman->setPosy(865);
+    //fantasmas
+    ghosts[0]->setPosx(20);
+    ghosts[0]->setPosy(245);
+    ghosts[1]->setPosx(730);
+    ghosts[1]->setPosy(245);
+    ghosts[2]->setPosx(20);
+    ghosts[2]->setPosy(600);
+    ghosts[3]->setPosx(730);
+    ghosts[3]->setPosy(600);
+    scene2();
 }

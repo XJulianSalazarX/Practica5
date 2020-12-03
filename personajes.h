@@ -22,7 +22,7 @@ class Personajes : public QObject, public QGraphicsItem
     QPixmap *pixmap;
 
 public:
-    explicit Personajes(QObject *parent = nullptr);
+    Personajes(QObject *parent = nullptr);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
