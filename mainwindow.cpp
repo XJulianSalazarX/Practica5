@@ -42,7 +42,7 @@ void MainWindow::scene1()
     ui->closeButton->setVisible(false);
     ui->pushButton->setVisible(false);
 
-    this->setGeometry(700,100,770,912);
+    this->setGeometry(550,100,770,912);
     this->setMinimumSize(width(),height());
     this->setMaximumSize(width(),height());
     scene = new QGraphicsScene();
@@ -89,13 +89,7 @@ void MainWindow::scene1()
 void MainWindow::scene2()
 {
     //escena
-    this->setGeometry(700,100,770,912);
     scene->setBackgroundBrush(QPixmap(":/imagenes/fondo_prueba.png"));
-    ui->graphicsView->setScene(scene);
-    ui->graphicsView->setFixedSize(width()-20,height()-30);
-    ui->graphicsView->setSceneRect(0,0,width()-20,height()-30);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     if(!gameCreated){
         //pacman
@@ -186,9 +180,9 @@ void MainWindow::scene3()
     ui->label_2->setText(QString::number(score->getScore()));
     ui->label_2->setGeometry(300,250,400,200);
     ui->pushButton->setVisible(true);
-    ui->pushButton->setGeometry(100,600,250,100);
+    ui->pushButton->setGeometry(250,450,250,100);
     ui->closeButton->setVisible(true);
-    ui->closeButton->setGeometry(400,600,250,100);
+    ui->closeButton->setGeometry(250,600,250,100);
 
 }
 

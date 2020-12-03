@@ -10,7 +10,6 @@ Enemy::Enemy(QString nombre,float posx_,float posy_,int vel)
     posy = posy_;
     this->setPos(posx_,posy_);
     velocidad = vel;
-
     begin = 0;
 
     //dimensiones de la imagen
