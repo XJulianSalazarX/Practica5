@@ -22,7 +22,7 @@ class Enemy: public QObject, public QGraphicsItem
     float begin;
 
 public:
-    Enemy(QString nombre,float posx_,float posy_);
+    Enemy(QString nombre,float posx_,float posy_,int vel);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
@@ -30,6 +30,12 @@ public:
     void Down();
     void Left();
     void Right();
+
+    int getPosx() const;
+    void setPosx(int value);
+
+    int getPosy() const;
+    void setPosy(int value);
 
 signals:
 public slots:

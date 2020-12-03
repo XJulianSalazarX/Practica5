@@ -2,10 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QRectF>
-#include <QDebug>
 #include <QGraphicsScene>
-#include <QKeyEvent>//recibir teclas
+#include <QKeyEvent>
 #include "personajes.h"
 #include "monedas.h"
 #include "laberinto.h"
@@ -14,6 +12,8 @@
 #include <QList>
 #include <QMediaPlayer>
 #include "health.h"
+#include <QFile>
+#include <QTextStream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,27 +30,33 @@ public:
 private slots:
     void on_playButton_clicked();
     void on_closeButton_clicked();
-    void moveGhosts();
+    void moveRedGhost();
+    void moveOrangeGhost();
+    void moveBlueGhost();
+    void movePinkGhost();
     void move();
     void ChocarFantasma();
     void Music();
     void startTimerG();
-
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
+    bool gameCreated = false;
     QString key;
+    int orangeMove = 0;
+    int blueMove = 1;
     Personajes *pacman;
-    Monedas *moneda;
     QList<Monedas *> coins;
-    laberinto *muro1;
     Score *score;
     Health *health;
     QList<Enemy *> ghosts;
+    QList<laberinto *> paredes;
     QTimer *timerG;
     QTimer *timerM;
+    QTimer *timerPac;
     QTimer *timer;
 
     //escenas
@@ -63,7 +69,8 @@ private:
     void keyPressEvent(QKeyEvent *evento);
 
     //paredes
-    void ConstruirMuro();
+    void crearLaberinto();
+    void agregarLaberinto();
     bool Chocar();
 
     //monedas
@@ -73,12 +80,10 @@ private:
 
     //fantasmas
     void CrearFantasmas();
+    bool ChoqueFantasmas(Enemy *enemy);
+
     //sonido
     QMediaPlayer *sound;
-
-    laberinto *pared1, *pared2, *pared3, *pared4, *pared5, *pared6, *pared7, *pared8, *pared9,
-    *pared10, *pared11, *pared12, *pared13, *pared14, *pared15, *pared16, *pared17, *pared18,
-    *pared19, *pared20, *pared21, *pared22, *pared23, *pared24, *pared25, *pared26, *pared27,
-    *pared28, *pared29,*pared30, *pared31, *pared32, *pared33;
+    QMediaPlayer *soundDead;
 };
 #endif // MAINWINDOW_H

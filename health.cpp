@@ -18,3 +18,8 @@ int Health::getHealth() const
 {
     return health;
 }
+
+void Health::setHealth(int value)
+{
+    health = value;
+}

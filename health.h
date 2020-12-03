@@ -1,7 +1,6 @@
 #ifndef HEALTH_H
 #define HEALTH_H
 
-
 #include <QGraphicsTextItem>
 #include <QFont>
 
@@ -11,6 +10,7 @@ public:
     Health(QGraphicsItem *parent = 0);
     void decrease();
     int getHealth() const;
+    void setHealth(int value);
 
 private:
     int health;

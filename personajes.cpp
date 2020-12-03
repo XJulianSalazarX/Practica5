@@ -18,7 +18,6 @@ Personajes::Personajes(QObject *parent) : QObject(parent)
      timer->start(120);
      connect(timer,SIGNAL(timeout()),this,SLOT(Actualizacion()));
      connect(timerD,SIGNAL(timeout()),this,SLOT(Morir()));
-
 }
 
 int Personajes::getPosx() const

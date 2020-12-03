@@ -1,6 +1,6 @@
 #include "enemy.h"
 
-Enemy::Enemy(QString nombre,float posx_,float posy_)
+Enemy::Enemy(QString nombre,float posx_,float posy_,int vel)
 {
     timer = new QTimer();
     filas = 0;
@@ -9,7 +9,7 @@ Enemy::Enemy(QString nombre,float posx_,float posy_)
     posx = posx_;
     posy = posy_;
     this->setPos(posx_,posy_);
-    velocidad =3;
+    velocidad = vel;
 
     begin = 0;
 
@@ -18,6 +18,26 @@ Enemy::Enemy(QString nombre,float posx_,float posy_)
      alto = 36;
      timer->start(150);
      connect(timer,&QTimer::timeout,this,&Enemy::Actualizacion);
+}
+
+int Enemy::getPosx() const
+{
+    return posx;
+}
+
+void Enemy::setPosx(int value)
+{
+    posx = value;
+}
+
+int Enemy::getPosy() const
+{
+    return posy;
+}
+
+void Enemy::setPosy(int value)
+{
+    posy = value;
 }
 
 QRectF Enemy::boundingRect() const

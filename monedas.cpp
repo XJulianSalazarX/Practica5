@@ -3,7 +3,6 @@
 Monedas::Monedas(float posx_, float posy_)
 {
     timer = new QTimer();
-    filas=0;
     columnas=0;
     pixmap = new QPixmap(":/imagenes/coin_gold.png");
     posx = posx_;
