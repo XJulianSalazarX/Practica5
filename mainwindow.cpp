@@ -97,8 +97,6 @@ void MainWindow::scene2()
         pacman->setPos(pacman->getPosx(),pacman->getPosy());
         //laberinto
         agregarLaberinto();
-        //monedas
-        ConstruirMonedas();
         //puntaje
         scene->addItem(score);
         //salud
